@@ -1,0 +1,8 @@
+{
+  "date": "2026-11-03",
+  "two_native_sessions": true,
+  "peer_change_executed": true,
+  "stale_edit_blocked": true,
+  "reviewed_edit_executed": true,
+  "scope": "Synthetic inline-hook demo; operator registers claims and acknowledges completeness. Native actions use Codex; no automatically inferred claims."
+}

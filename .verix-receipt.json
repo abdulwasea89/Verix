@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "session": {
+    "id": "0f9dbe20555243b7812468c48b036a89",
+    "base": "e8194c246679b09474305f078d2dcc74f857f045",
+    "agent": "codex-acceptance-reviewed",
+    "incomplete": 0
+  },
+  "nodes": {
+    "110249a2071a493ca91419474dcadbe5": {
+      "id": "110249a2071a493ca91419474dcadbe5",
+      "kind": "observation",
+      "path": "docs/codex.md",
+      "revision": "e8194c246679b09474305f078d2dcc74f857f045",
+      "fingerprint": {
+        "sha256": "785262244555b61040399298e36051d39c863fc1f16692d0d9ed3fbf7aaa0581",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "405eb190790c479ea60f47014ea23d0b": {
+      "id": "405eb190790c479ea60f47014ea23d0b",
+      "kind": "observation",
+      "path": "docs/live-pr-validation.md",
+      "revision": "e8194c246679b09474305f078d2dcc74f857f045",
+      "fingerprint": {
+        "sha256": "0a5fea82dad48aff878631632d7ceb73cef7d0e1ac9b47caeae46f508e64c320",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "41a64cbbe8094eb28954a81f628babbe": {
+      "id": "41a64cbbe8094eb28954a81f628babbe",
+      "kind": "observation",
+      "path": "benchmark/results/native-sessions-20261103.json",
+      "revision": "e8194c246679b09474305f078d2dcc74f857f045",
+      "fingerprint": {
+        "sha256": "a09f08d8ba000f0d2766346c25d9546a37f54651f2e7f773b5deaf111897d2a7",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "432cc2e519e442d88f6921c0419f0766": {
+      "id": "432cc2e519e442d88f6921c0419f0766",
+      "kind": "observation",
+      "path": "benchmark/results/codex-smoke-20261103.json",
+      "revision": "e8194c246679b09474305f078d2dcc74f857f045",
+      "fingerprint": {
+        "sha256": "701226f060bb6c7ffc083f2d7d386822ae2f6e4d04be32d035377cc7a1b7ef5b",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "5ce91f24c80f4c419198ba645a891a6f": {
+      "id": "5ce91f24c80f4c419198ba645a891a6f",
+      "kind": "observation",
+      "path": "docs/release-status.md",
+      "revision": "e8194c246679b09474305f078d2dcc74f857f045",
+      "fingerprint": {
+        "sha256": "5b740da58edc2131868de068b0efafc149922360ee2ffd6ce3edbfeee5096f0b",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "6b1457f7b5414788ac576573647e38d0": {
+      "id": "6b1457f7b5414788ac576573647e38d0",
+      "kind": "observation",
+      "path": "scripts/run_codex_trials.py",
+      "revision": "e8194c246679b09474305f078d2dcc74f857f045",
+      "fingerprint": {
+        "sha256": "3e2a60d8b706229b98777bdc4edaf6ac3aab12072b9d44b4e79924e5a483e39e",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "75a11be39a9d46e5848b1f1eb07f811e": {
+      "id": "75a11be39a9d46e5848b1f1eb07f811e",
+      "kind": "observation",
+      "path": "benchmark/codex-protocol.md",
+      "revision": "e8194c246679b09474305f078d2dcc74f857f045",
+      "fingerprint": {
+        "sha256": "2e19083e7977ca709bbb53292985b57acf3c479901842194d86bb85c0318393d",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "9fe1cad5c44a4159a75224762749ff37": {
+      "id": "9fe1cad5c44a4159a75224762749ff37",
+      "kind": "observation",
+      "path": "src/verix/hooks/codex.py",
+      "revision": "e8194c246679b09474305f078d2dcc74f857f045",
+      "fingerprint": {
+        "sha256": "b6b7bf61394dad6a0fd4e16438a7c998a9b8237c4173c0c9fa7e6c1bfce6a817",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "a58430be138643e4bc14362e5d0f5382": {
+      "id": "a58430be138643e4bc14362e5d0f5382",
+      "kind": "observation",
+      "path": "README.md",
+      "revision": "e8194c246679b09474305f078d2dcc74f857f045",
+      "fingerprint": {
+        "sha256": "5c785cbd6145e5f58b6bb329f9b02c3ae8fa51e5da07597de1dae58a2b6d9ca9",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "e3266250525a4ed381fe7566432d6a72": {
+      "id": "e3266250525a4ed381fe7566432d6a72",
+      "kind": "observation",
+      "path": "docs/release-acceptance.md",
+      "revision": "e8194c246679b09474305f078d2dcc74f857f045",
+      "fingerprint": {
+        "sha256": "89a5859ac03d0a66ecd716c27628e0209dfcf9d59c2a322ac2567b8d225cbb22",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "e4b6e6a01f7049c68bbee80a70796610": {
+      "id": "e4b6e6a01f7049c68bbee80a70796610",
+      "kind": "claim",
+      "text": "Claim e4b6e6a01f7049c68bbee80a70796610 (text kept locally)",
+      "groups": [
+        [
+          "a58430be138643e4bc14362e5d0f5382",
+          "75a11be39a9d46e5848b1f1eb07f811e",
+          "432cc2e519e442d88f6921c0419f0766",
+          "41a64cbbe8094eb28954a81f628babbe",
+          "110249a2071a493ca91419474dcadbe5",
+          "405eb190790c479ea60f47014ea23d0b",
+          "e3266250525a4ed381fe7566432d6a72",
+          "5ce91f24c80f4c419198ba645a891a6f",
+          "6b1457f7b5414788ac576573647e38d0",
+          "9fe1cad5c44a4159a75224762749ff37",
+          "e694c13cb5c546f7baffaf823238b41d",
+          "f4015fdfedac407691247501fecd33c6"
+        ]
+      ]
+    },
+    "e694c13cb5c546f7baffaf823238b41d": {
+      "id": "e694c13cb5c546f7baffaf823238b41d",
+      "kind": "observation",
+      "path": "tests/test_codex.py",
+      "revision": "e8194c246679b09474305f078d2dcc74f857f045",
+      "fingerprint": {
+        "sha256": "2fa82b0f2203f7107b0c377babf0756b062bb907a0870505df2e9f9569ee4c16",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "f4015fdfedac407691247501fecd33c6": {
+      "id": "f4015fdfedac407691247501fecd33c6",
+      "kind": "observation",
+      "path": "tests/test_codex_trials.py",
+      "revision": "e8194c246679b09474305f078d2dcc74f857f045",
+      "fingerprint": {
+        "sha256": "c9e0efef365462a0a927850b8895d76dbbf367d82b3bc9fe7aa6d6648a58af2f",
+        "mode": "100644"
+      },
+      "complete": true
+    }
+  }
+}

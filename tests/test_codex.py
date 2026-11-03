@@ -131,7 +131,7 @@ class CodexTests(unittest.TestCase):
     def test_compaction_preserves_capture(self):
         self.read()
         before = self.engine.store.nodes("codex")
-        handle(self.engine, self.native(event="PreCompact"))
+        self.assertEqual(handle(self.engine, self.native(event="PreCompact")), {"continue": True})
         self.assertEqual(self.engine.store.nodes("codex"), before)
 
     def test_installer_preserves_settings_and_is_idempotent(self):

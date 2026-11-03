@@ -33,7 +33,9 @@ def handle(engine, payload):
         raise VerixError("Codex hook cwd must be the repository root")
     with engine.store.transaction():
         engine.start("codex", session)
-        if event in ("SessionStart", "PreCompact"):
+        if event == "PreCompact":
+            return {"continue": True}
+        if event == "SessionStart":
             return {
                 "hookSpecificOutput": {
                     "hookEventName": event,
