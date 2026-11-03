@@ -13,14 +13,14 @@ Version remains `0.1.0` while release acceptance is open. This is a working deve
 | 5. Impact engine | Transitive suspicion, unrelated controls, explicit alternative evidence groups, unknown evidence | Real repository dependency coverage is unproven |
 | 6. Policy/verification | Validated policy, allow/verify/block/unresolved, explicit reaffirmation/checks, revision/content/policy-bound approvals, deterministic replay | Human confirmation remains a trust input |
 | 7. CLI/hooks | Session lifecycle, Read/Edit/Write capture, idempotent settings merge, compaction persistence, concurrent-event/race regressions | Linux Codex narrow-path live evidence recorded; Claude sessions and Windows hook-shell validation remain |
-| 8. PR integration | Trusted-base policy, untrusted receipts, exact SHAs, fork permission isolation, one-comment update, stale-run suppression, JSON artifacts | Live same-repository/fork PR permissions and branch protection |
+| 8. PR integration | Trusted-base policy, receipts, exact SHAs, fork isolation, comment updates, stale-run suppression, artifacts; live same-repository/fork and disposable merge-protection validation | Production rollout and required checks on main remain operator configuration |
 | 9. Evaluation/release | Installed-wheel benchmark smoke check and installation timing, 5,000-file simulated hook latency check, operational/security documentation | Reviewed real-agent trials, customer validation, final release decision |
 
 ## Verified automated evidence
 
 The path-fix CI run passed all Linux, macOS, and Windows jobs: [run 41518933457](https://github.com/abdulwasea89/Verix/actions/runs/41518933457). Each job includes tests, coverage, lint/format, package building, and installed-wheel benchmark execution. Follow-up commits add further hook, PR, and performance checks; inspect their own runs before relying on them.
 
-The current local suite passes 77 tests plus parameterized subtests, with 95.53% engine statement coverage on Python 3.14. Workflow JavaScript tests execute under Node.js with mocked GitHub APIs; they do not post comments. CI supplies Node.js and runs the suite on Python 3.12 across Linux, macOS, and Windows.
+The current local suite passes 79 tests plus parameterized subtests, with 95.53% engine statement coverage on Python 3.14. Workflow JavaScript tests execute under Node.js with mocked GitHub APIs; they do not post comments. CI supplies Node.js and runs the suite on Python 3.12 across Linux, macOS, and Windows.
 
 Windows latency now measures 281 ms median and 282 ms p95 across the unchanged 20-sample, 5,000-file fixture in [run 41531655667](https://github.com/abdulwasea89/Verix/actions/runs/41531655667), meeting the proposed 300 ms / 1 s targets on that runner. Earlier measurements reached 391 ms median after initial batching and varied above target during subsequent runs.
 
@@ -36,6 +36,6 @@ Default exact-byte blocking produces two false blocks among seven valid fixture 
 
 ## Deferred external gates
 
-The user has deferred paid real-agent trials until implementation, commits/pushes, and automated checks are reported complete. Do not spend on the planned minimum 450 trials without a subsequent instruction. Independently reviewed labels, live PR rollout, branch protection, customer interviews, design partners, and a final release decision cannot be replaced with synthetic tests.
+The user has deferred paid real-agent trials until implementation, commits/pushes, and automated checks are reported complete. Do not spend on the planned minimum 450 trials without a subsequent instruction. Live PR evidence is recorded in [the validation walkthrough](live-pr-validation.md); production rollout and main branch protection remain unconfigured. Independently reviewed labels, customer interviews, design partners, and a final release decision cannot be replaced with synthetic tests.
 
 A narrow Codex adapter was subsequently authorized; its live evidence and limits are recorded in [codex.md](codex.md). No subscriptions, hosted history, dashboard, LLM claim extraction, or automatic release publishing are included in this V1 scope.

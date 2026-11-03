@@ -180,7 +180,7 @@ jobs:
       tool-ref: main
 ```
 
-Pin both `main` references to the same reviewed Verix commit for production use. Analysis uses base-branch policy and exact base/head commits, without executing PR commands. Same-repository PRs can receive one updated comment; forks receive job summaries and artifacts. Require the check and an up-to-date branch in your merge policy. [Operational details](docs/usage.md) cover permissions and limits.
+Pin both `main` references to the same reviewed Verix commit for production use. Analysis uses base-branch policy and exact base/head commits, without executing PR commands. Same-repository PRs can receive one updated comment; forks receive job summaries and artifacts. Require the check and an up-to-date branch in your merge policy. [Operational details](docs/usage.md) cover permissions and limits. [Live validation and the setup walkthrough](docs/live-pr-validation.md) show the tested PR workflow and how to use it.
 
 ## Evaluation and project links
 
