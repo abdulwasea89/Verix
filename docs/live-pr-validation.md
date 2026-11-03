@@ -71,3 +71,9 @@ Inspect the receipt, commit it with your changes, push, and open the PR. On the 
 If blocked, review the changed files, capture fresh reads, and register fresh claims in a new session before exporting again. Local `--reaffirm` approvals are stripped from receipts; they cannot authorize CI. If unresolved, inspect the artifact for missing/malformed receipts or incomplete evidence. Never change the PR policy to bypass a finding.
 
 Receipts are self-reported metadata and can include sensitive paths. Hooks and green checks do not prove correctness or hidden-dependency coverage. Merge queues and independent-contributor approval settings were not exercised by this validation.
+
+## Production rollout follow-through
+
+The production target now uses blocking base policy and a workflow pinned to reviewed implementation `0c60404`. Main requires PRs, `check / analyze`, all three platform CI jobs, and an up-to-date branch, with administrator enforcement and no force pushes/deletions. Zero approving reviews allows the solo owner to use the PR workflow; independent release reviews remain separate acceptance requirements.
+
+[PR #4](https://github.com/abdulwasea89/Verix/pull/4) tested missing and stale receipts against real main; both were rejected and a single comment updated from unresolved to verify. [Fork PR #5](https://github.com/abdulwasea89/Verix/pull/5) passed analysis with read-only permissions, no secrets, and a skipped comment job. It was closed without merging. Detailed evidence and the quality/customer gates remain in [release status](release-status.md). Future changes must include a freshly reviewed receipt and pass all required checks; no administrator bypass is used.
