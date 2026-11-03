@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "session": {
+    "id": "b6270fd451b544948c86bb20606ab3a6",
+    "base": "6c3818c7072c572ea45ea798f8fa7e2afc8a6591",
+    "agent": "live-pr-base-advance",
+    "incomplete": 0
+  },
+  "nodes": {
+    "3e2f1d991a3b4027af14b762cf0c4333": {
+      "id": "3e2f1d991a3b4027af14b762cf0c4333",
+      "kind": "claim",
+      "text": "Claim 3e2f1d991a3b4027af14b762cf0c4333 (text kept locally)",
+      "groups": [
+        [
+          "9a60ef4aef20486b8a016042631e952f"
+        ]
+      ]
+    },
+    "9a60ef4aef20486b8a016042631e952f": {
+      "id": "9a60ef4aef20486b8a016042631e952f",
+      "kind": "observation",
+      "path": "live-pr-fixture/auth.py",
+      "revision": "6c3818c7072c572ea45ea798f8fa7e2afc8a6591",
+      "fingerprint": {
+        "sha256": "eadd8ee5b5cd19743b9e5b8e4956141f6f291414b2023762cf2112a7889cc7d5",
+        "mode": "100644"
+      },
+      "complete": true
+    }
+  }
+}
