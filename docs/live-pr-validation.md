@@ -47,7 +47,7 @@ jobs:
       tool-ref: 0c60404cfaa8c2ad8e130c4f34e2a9c0c52d0c57
 ```
 
-3. After the first run, configure the target branch's protection: require `check / analyze` from GitHub Actions, require the branch to be up to date, and apply the rule to administrators/bypass actors. Also require your normal test checks. GitHub's [protected-branch documentation](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches) explains these controls. Verix's `main` had no protection during this validation; test-branch protection does not protect `main`.
+3. After the first run, configure the target branch's protection: require `check / analyze` from GitHub Actions, require the branch to be up to date, and apply the rule to administrators/bypass actors. Also require your normal test checks. GitHub's [protected-branch documentation](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches) explains these controls. Verix's `main` had no protection during the original validation. Production follow-through now requires PRs, Verix plus all three CI jobs, and strict updates with administrator enforcement; see [release status](release-status.md).
 
 ## Use it for each change
 

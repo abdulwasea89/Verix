@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "session": {
+    "id": "a1c75580ca8f41dcbcc3de168a61acba",
+    "base": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+    "agent": "codex-acceptance-pr",
+    "incomplete": 0
+  },
+  "nodes": {
+    "0c7d1edf51574933abd5a4ff00266a53": {
+      "id": "0c7d1edf51574933abd5a4ff00266a53",
+      "kind": "observation",
+      "path": "README.md",
+      "revision": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+      "fingerprint": {
+        "sha256": "5c785cbd6145e5f58b6bb329f9b02c3ae8fa51e5da07597de1dae58a2b6d9ca9",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "288cc55fdd5c49eb814e0eb3b9039196": {
+      "id": "288cc55fdd5c49eb814e0eb3b9039196",
+      "kind": "observation",
+      "path": "src/verix/hooks/codex.py",
+      "revision": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+      "fingerprint": {
+        "sha256": "b6b7bf61394dad6a0fd4e16438a7c998a9b8237c4173c0c9fa7e6c1bfce6a817",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "2a166d4db4c84d28a2e4a183b24979a9": {
+      "id": "2a166d4db4c84d28a2e4a183b24979a9",
+      "kind": "observation",
+      "path": "benchmark/results/codex-smoke-20261103.json",
+      "revision": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+      "fingerprint": {
+        "sha256": "701226f060bb6c7ffc083f2d7d386822ae2f6e4d04be32d035377cc7a1b7ef5b",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "3d1d710e4a0b4be3abb17f5f7bfbe49a": {
+      "id": "3d1d710e4a0b4be3abb17f5f7bfbe49a",
+      "kind": "observation",
+      "path": "docs/release-status.md",
+      "revision": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+      "fingerprint": {
+        "sha256": "29ecb9737eb32719057354e3bb2b5f260489c8635ec1185fb895a5bf3e32b881",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "3fbea9b9bae9410cbad6eb6748a060fe": {
+      "id": "3fbea9b9bae9410cbad6eb6748a060fe",
+      "kind": "claim",
+      "text": "Claim 3fbea9b9bae9410cbad6eb6748a060fe (text kept locally)",
+      "groups": [
+        [
+          "0c7d1edf51574933abd5a4ff00266a53",
+          "b403c7b6f28d442c94f4fa21c4a03e27",
+          "2a166d4db4c84d28a2e4a183b24979a9",
+          "933abcae19c649968c0fbaf277d41227",
+          "deac483b54674d57be799e3b3f007f16",
+          "acc8d81b97204f03a73ccbb0254447b5",
+          "d9c1cac0c8a6448aac6ebe3bfef76a9d",
+          "3d1d710e4a0b4be3abb17f5f7bfbe49a",
+          "4fb07d1d371f44d5badd29b35858b69b",
+          "288cc55fdd5c49eb814e0eb3b9039196",
+          "cef6ed650205466e98ad48de1f5fe7a8",
+          "4d27337b5b01472c9256be52d048a808"
+        ]
+      ]
+    },
+    "4d27337b5b01472c9256be52d048a808": {
+      "id": "4d27337b5b01472c9256be52d048a808",
+      "kind": "observation",
+      "path": "tests/test_codex_trials.py",
+      "revision": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+      "fingerprint": {
+        "sha256": "c9e0efef365462a0a927850b8895d76dbbf367d82b3bc9fe7aa6d6648a58af2f",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "4fb07d1d371f44d5badd29b35858b69b": {
+      "id": "4fb07d1d371f44d5badd29b35858b69b",
+      "kind": "observation",
+      "path": "scripts/run_codex_trials.py",
+      "revision": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+      "fingerprint": {
+        "sha256": "3e2a60d8b706229b98777bdc4edaf6ac3aab12072b9d44b4e79924e5a483e39e",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "933abcae19c649968c0fbaf277d41227": {
+      "id": "933abcae19c649968c0fbaf277d41227",
+      "kind": "observation",
+      "path": "benchmark/results/native-sessions-20261103.json",
+      "revision": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+      "fingerprint": {
+        "sha256": "a09f08d8ba000f0d2766346c25d9546a37f54651f2e7f773b5deaf111897d2a7",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "acc8d81b97204f03a73ccbb0254447b5": {
+      "id": "acc8d81b97204f03a73ccbb0254447b5",
+      "kind": "observation",
+      "path": "docs/live-pr-validation.md",
+      "revision": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+      "fingerprint": {
+        "sha256": "d3c633ef80211a95aaecea541f7adfa88ff1e89f6def1edd3d4a26c95f839763",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "b403c7b6f28d442c94f4fa21c4a03e27": {
+      "id": "b403c7b6f28d442c94f4fa21c4a03e27",
+      "kind": "observation",
+      "path": "benchmark/codex-protocol.md",
+      "revision": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+      "fingerprint": {
+        "sha256": "2e19083e7977ca709bbb53292985b57acf3c479901842194d86bb85c0318393d",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "cef6ed650205466e98ad48de1f5fe7a8": {
+      "id": "cef6ed650205466e98ad48de1f5fe7a8",
+      "kind": "observation",
+      "path": "tests/test_codex.py",
+      "revision": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+      "fingerprint": {
+        "sha256": "2fa82b0f2203f7107b0c377babf0756b062bb907a0870505df2e9f9569ee4c16",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "d9c1cac0c8a6448aac6ebe3bfef76a9d": {
+      "id": "d9c1cac0c8a6448aac6ebe3bfef76a9d",
+      "kind": "observation",
+      "path": "docs/release-acceptance.md",
+      "revision": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+      "fingerprint": {
+        "sha256": "98153feeded73a5354d7bc77fea2b9ba863e700065eae497559b3617f3123f18",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "deac483b54674d57be799e3b3f007f16": {
+      "id": "deac483b54674d57be799e3b3f007f16",
+      "kind": "observation",
+      "path": "docs/codex.md",
+      "revision": "19602a2c6f2a6f58e1069bdf15ad90f3a44066f3",
+      "fingerprint": {
+        "sha256": "785262244555b61040399298e36051d39c863fc1f16692d0d9ed3fbf7aaa0581",
+        "mode": "100644"
+      },
+      "complete": true
+    }
+  }
+}

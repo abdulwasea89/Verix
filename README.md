@@ -134,7 +134,7 @@ This merges `.codex/hooks.json` and creates a minimal `.codex/config.toml` enabl
 
 The adapter captures single literal `cat path` reads and checks every native `apply_patch` target. Claims remain explicit. Hook sessions use Codex's native `session_id`, which is separate from a session created with `verix session start`.
 
-Start in advisory mode. Reads and unsupported commands mark capture incomplete; blocking mode denies unsupported commands, including ordinary shell tests and shell edits. Keep the installed Python interpreter available. [Codex setup and live evidence](docs/codex.md) explain the supported workflow and limits; repository-file discovery and interactive trust still need live validation.
+Start in advisory mode. Reads and unsupported commands mark capture incomplete; blocking mode denies unsupported commands, including ordinary shell tests and shell edits. Keep the installed Python interpreter available. [Codex setup and live evidence](docs/codex.md) explain the supported workflow and limits; Linux repository-file discovery and interactive trust were exercised in the acceptance work; broader native coverage remains limited.
 
 Claude Code users can install its adapter with `verix init --hooks`. See [operations](docs/usage.md) for integration details.
 
@@ -156,7 +156,7 @@ verix receipt export --session SESSION_ID > .verix-receipt.json
 
 This redirection works in Bash and PowerShell 7. Inspect the receipt, commit it with your changes, push, and open the PR. Receipts omit file bodies and original claim text, but paths and hashes can still be sensitive.
 
-The workflow analyzes exact revisions under the trusted base policy. Same-repository PRs get one updated comment; forks get a report artifact and job summary. Require `check / analyze` and an up-to-date branch in branch protection. A policy added only in the PR cannot enable base-branch blocking. Verix's own `main` enforcement has not been configured by the validation tests.
+The workflow analyzes exact revisions under the trusted base policy. Same-repository PRs get one updated comment; forks get a report artifact and job summary. Require `check / analyze` and an up-to-date branch in branch protection. A policy added only in the PR cannot enable base-branch blocking. Verix's own `main` now requires PRs, Verix, all three CI jobs, and an up-to-date branch, including for administrators.
 
 ## Troubleshooting
 
@@ -171,7 +171,8 @@ The workflow analyzes exact revisions under the trusted base policy. Same-reposi
 - [Contributor guide](CONTRIBUTING.md) and [agent instructions](AGENTS.md)
 - [Configuration, verification, and recovery](docs/usage.md)
 - [Codex integration](docs/codex.md) and [live PR validation](docs/live-pr-validation.md)
-- [Benchmark protocol](benchmark/README.md) and [release acceptance](docs/release-status.md)
+- [Benchmark protocol](benchmark/README.md), [local Codex trials](benchmark/codex-protocol.md), and [release acceptance](docs/release-status.md)
+- [Independent review and pilot handoff](docs/release-acceptance.md)
 - [Security and reporting](SECURITY.md)
 
 Verix cannot prove code correct, discover every hidden dependency, or replace review and tests. Receipts are self-reported and hooks are not a security boundary. Hosted subscriptions, dashboards, and automatic claim extraction are outside this release.
