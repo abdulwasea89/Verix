@@ -93,6 +93,32 @@ class CiTests(unittest.TestCase):
         self.assertEqual(result["verdict"], "block")
         self.assertEqual(result["mode"], "blocking")
 
+    def test_fresh_receipt_for_pr_source_changes_allows(self):
+        (self.root / "source.py").write_text("VALUE = 2\n", newline="\n")
+        engine = Engine(self.root)
+        try:
+            session = engine.start("reviewed-pr-change")
+            engine.observe(session, "source.py")
+            engine.claim(session, "Reviewed source contract", ["source.py"], [])
+            with engine.store.transaction():
+                engine.store.db.execute("UPDATE sessions SET incomplete=0 WHERE id=?", (session,))
+            self.receipt = receipts.export(engine, session)
+        finally:
+            engine.store.db.close()
+        (self.root / "receipt.json").write_text(json.dumps(self.receipt))
+        self.assertEqual(self.analyze(0)["verdict"], "allow")
+
+    def test_diverged_target_branch_still_blocks_stale_evidence(self):
+        original = self.base
+        self.git("checkout", "-qb", "target-drift")
+        (self.root / "source.py").write_text("VALUE = 2\n", newline="\n")
+        self.git("add", "source.py")
+        self.git("commit", "-qm", "target branch changes source")
+        self.base = self.git("rev-parse", "HEAD")
+        self.git("checkout", "-qb", "pr-without-target-change", original)
+        (self.root / "receipt.json").write_text(json.dumps(self.receipt))
+        self.assertEqual(self.analyze(20)["verdict"], "block")
+
     def test_malformed_receipt_is_unresolved(self):
         (self.root / "receipt.json").write_text("{invalid")
         self.assertEqual(self.analyze(30)["verdict"], "unresolved")

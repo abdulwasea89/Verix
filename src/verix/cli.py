@@ -173,21 +173,21 @@ def ci(args):
             paths, key=lambda p: {"low": 0, "medium": 1, "high": 2}[policy.risk(engine.policy, p)]
         )
         result = engine.check(session, protected, "merge", head)
-        # Separate target-branch drift from the PR's own changes.
-        result["base_analysis"] = engine.analyze(session, base)
-        base_states = [
-            state
-            for key, state in result["base_analysis"]["states"].items()
-            if result["base_analysis"]["nodes"][key]["kind"] != "observation"
-        ]
-        result["inputs"]["states"] += base_states
+        # An up-to-date head already includes the base; comparing it backward rejects reviewed edits.
+        common = engine.repo.git("merge-base", base, head).decode().strip()
+        if common != base:
+            base_analysis = engine.analyze(session, base)
+            result["inputs"]["states"] += [
+                state
+                for key, state in base_analysis["states"].items()
+                if base_analysis["nodes"][key]["kind"] != "observation"
+            ]
         result["verdict"] = policy.evaluate(**result["inputs"])
         with engine.store.transaction():
             result["audit_id"] = engine.store.audit(result)
         result["analyzed_base"] = base
         result["analyzed_head"] = head
         result.pop("policy", None)
-        result.pop("base_analysis", None)
         result["limits"] = (
             "Self-reported receipt; not an attestation. Require an up-to-date branch before merge."
         )

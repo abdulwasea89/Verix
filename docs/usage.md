@@ -55,6 +55,8 @@ jobs:
 
 Pin both references to a reviewed Verix commit for production. The workflow installs trusted Verix code separately from PR data, evaluates the policy from the PR base revision, analyzes exact base/head commits, and uploads a JSON artifact. It never runs PR verification commands. Missing receipts produce unresolved results. Same-repository PRs receive one updated comment; forks receive an artifact and job summary without requiring write access.
 
+For an up-to-date PR, evidence is compared with the exact head revision; the earlier base contents do not invalidate freshly reviewed PR edits. When base and head diverge, a separate base comparison retains conservative target-drift detection. After changing an observed file, capture it again and register a new claim before exporting; exported local reaffirmations are deliberately discarded.
+
 Configure branch protection to require the check and require an up-to-date branch. Configure merge-queue support separately before relying on a merge queue; this implementation handles pull_request runs only. A result does not authorize a later base/head revision.
 
 ## Troubleshooting and recovery
