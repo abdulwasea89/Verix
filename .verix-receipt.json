@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "session": {
+    "id": "895410f881774676a079d9b79306ef5d",
+    "base": "7d9323dd3b349861d822bd6a2cf678d3d9ccdaaf",
+    "agent": "production-fork-check",
+    "incomplete": 0
+  },
+  "nodes": {
+    "bb8c3880a3684b40a9f8c2076158b35d": {
+      "id": "bb8c3880a3684b40a9f8c2076158b35d",
+      "kind": "observation",
+      "path": "README.md",
+      "revision": "7d9323dd3b349861d822bd6a2cf678d3d9ccdaaf",
+      "fingerprint": {
+        "sha256": "ebf9d2405e5744f656fb134e74a26ea893495d52e4461a84316fd3588a66e1fa",
+        "mode": "100644"
+      },
+      "complete": true
+    },
+    "e59d80a59a5b400080d272a9ea2b6c60": {
+      "id": "e59d80a59a5b400080d272a9ea2b6c60",
+      "kind": "claim",
+      "text": "Claim e59d80a59a5b400080d272a9ea2b6c60 (text kept locally)",
+      "groups": [
+        [
+          "bb8c3880a3684b40a9f8c2076158b35d"
+        ]
+      ]
+    }
+  }
+}
