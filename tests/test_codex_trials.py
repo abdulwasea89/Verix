@@ -151,6 +151,33 @@ class TrialTests(unittest.TestCase):
             first["protocol_hash"], trials.manifest(changed, "codex 1")["protocol_hash"]
         )
         self.assertIn("implementation_sha256", first)
+        self.assertNotEqual(
+            first["protocol_hash"],
+            trials.manifest(cases, "codex 1", ignore_python_formatting=True)["protocol_hash"],
+        )
+
+    def test_normalized_hash_baseline_ignores_formatting_but_strict_mode_flags_it(self):
+        with patch.object(trials, "invoke", side_effect=self.fake_invoke):
+            trials.trial(self.directory, self.case, "no_guard", ignore_python_formatting=True)
+        state = trials.read(self.directory / "state.json")
+        state["condition"] = "file_hash"
+        state["claims"] = {"contract": "contract-node"}
+        root = self.directory / "repo"
+        (root / "loader.py").write_text("def load_user(id):\n\n    return id\n", encoding="utf-8")
+        engine = trials.Engine(root)
+        try:
+            engine.policy["ignore_python_formatting"] = True
+            self.assertEqual(trials.decision(engine, state)["flags"], [])
+            state["ignore_python_formatting"] = False
+            self.assertEqual(trials.decision(engine, state)["flags"], ["contract"])
+        finally:
+            engine.store.db.close()
+
+    def test_trial_resume_rejects_a_different_fingerprint_profile(self):
+        with patch.object(trials, "invoke", side_effect=self.fake_invoke):
+            trials.trial(self.directory, self.case, "no_guard", ignore_python_formatting=True)
+        with self.assertRaisesRegex(ValueError, "profile mismatch"):
+            trials.trial(self.directory, self.case, "no_guard")
 
     def test_unknown_native_tools_and_out_of_protocol_writes_are_denied(self):
         with patch.object(trials, "invoke", side_effect=self.fake_invoke):
@@ -186,6 +213,63 @@ class TrialTests(unittest.TestCase):
             trials.main()
         invoke.assert_not_called()
         self.assertFalse(self.directory.exists())
+
+    def test_diagnostic_only_runs_full_batch_and_keeps_release_unaccepted(self):
+        from types import SimpleNamespace
+        from contextlib import nullcontext
+        from contextlib import redirect_stdout
+        from io import StringIO
+
+        output = self.directory
+        row = {
+            "scenario": self.case["id"],
+            "condition": "no_guard",
+            "initial_decision": {"flags": [], "verdict": "allow"},
+            "task_completed": True,
+            "unsafe_execution": False,
+            "proposals": [{"guard": {"verdict": "allow"}, "proposal_valid": True}],
+            "protocol_violations": 0,
+            "hook_seconds": 0.01,
+            "read_response": {"seconds": 1},
+            "action_response": {"seconds": 2},
+        }
+        with (
+            patch.object(
+                trials.sys,
+                "argv",
+                [
+                    "runner",
+                    "--output",
+                    str(output),
+                    "--diagnostic-only",
+                    "--ignore-python-formatting",
+                ],
+            ),
+            patch.object(trials.sys, "platform", "linux"),
+            patch.object(trials.subprocess, "check_output", return_value="codex 0.164.0"),
+            patch.object(
+                trials.subprocess,
+                "run",
+                return_value=SimpleNamespace(
+                    returncode=0, stdout="Logged in using ChatGPT", stderr=""
+                ),
+            ),
+            patch.object(trials, "load", return_value=[self.case]),
+            patch.object(trials, "trial", return_value=row) as run_trial,
+            patch.object(trials, "locked", return_value=nullcontext()),
+            redirect_stdout(StringIO()),
+        ):
+            trials.main()
+        self.assertEqual(run_trial.call_count, 15)
+        manifest = trials.read(output / "manifest.json")
+        summary = trials.read(output / "summary.json")
+        self.assertTrue(manifest["diagnostic_only"])
+        self.assertEqual(
+            manifest["review_status"], "owner-authorized diagnostic; independent review pending"
+        )
+        self.assertTrue(manifest["ignore_python_formatting"])
+        self.assertFalse(summary["release_accepted"])
+        self.assertEqual(summary["completed_trials"], 15)
 
     def test_failed_postprocessing_resume_reuses_completed_agent_response(self):
         with patch.object(trials, "invoke", side_effect=self.fake_invoke):

@@ -15,6 +15,7 @@ import sys
 import time
 
 from verix.benchmark import load
+from verix.engine.git import equivalent
 from verix.engine.policy import evaluate
 from verix.engine.service import Engine
 from verix.hooks.codex import handle
@@ -117,7 +118,11 @@ def decision(engine, state):
     if state["condition"] == "no_guard":
         return {"verdict": "allow", "flags": []}
     if state["condition"] == "file_hash":
-        changed = {p for p, fp in state["recorded"].items() if engine.repo.fingerprint(p) != fp}
+        changed = {
+            p
+            for p, fp in state["recorded"].items()
+            if not equivalent(engine.fingerprint(p), fp, state["ignore_python_formatting"])
+        }
         flags = [
             c["id"]
             for c in state["case"]["claims"]
@@ -153,6 +158,7 @@ def capture(directory, payload):
     state = read(directory / "state.json")
     engine = Engine(directory / "repo")
     engine.policy["mode"] = "advisory"
+    engine.policy["ignore_python_formatting"] = state["ignore_python_formatting"]
     engine.policy["risk"] = {state["case"]["action"]["path"]: state["case"]["action"]["risk"]}
     started = time.monotonic()
     record = {"payload": payload}
@@ -312,7 +318,7 @@ def invoke(directory, phase, prompt, session=None):
     }
 
 
-def trial(directory, case, condition):
+def trial(directory, case, condition, ignore_python_formatting=False):
     state_path = directory / "state.json"
     root = directory / "repo"
     if not state_path.exists():
@@ -324,8 +330,18 @@ def trial(directory, case, condition):
         files(root, case["files"])
         git(root, "add", "--", *case["files"])
         git(root, "commit", "-qm", "trial before")
-        write(state_path, {"case": case, "condition": condition, "phase": "read"})
+        write(
+            state_path,
+            {
+                "case": case,
+                "condition": condition,
+                "phase": "read",
+                "ignore_python_formatting": ignore_python_formatting,
+            },
+        )
     state = read(state_path)
+    if state.get("ignore_python_formatting", False) != ignore_python_formatting:
+        raise ValueError("Trial fingerprint profile mismatch")
     if state["phase"] == "read":
         prompt = (
             "Controlled synthetic diagnostic task. Use only single literal cat commands, one "
@@ -346,6 +362,7 @@ def trial(directory, case, condition):
             raise RuntimeError("Missing native session or plan")
         engine = Engine(root)
         try:
+            engine.policy["ignore_python_formatting"] = ignore_python_formatting
             observations = [
                 n
                 for n in engine.store.nodes(state["session"]).values()
@@ -353,7 +370,7 @@ def trial(directory, case, condition):
             ]
             if set(case["reads"]) != {n["path"] for n in observations}:
                 raise RuntimeError("Native full-read capture does not match declared evidence")
-            state["recorded"] = {p: engine.repo.fingerprint(p) for p in case["reads"]}
+            state["recorded"] = {p: engine.fingerprint(p) for p in case["reads"]}
             adopted = json.loads(response["messages"][-1])
             known = {c["id"] for c in case["claims"]}
             if (
@@ -406,6 +423,7 @@ def trial(directory, case, condition):
             git(root, "commit", "-qm", "trial seeded change")
         engine = Engine(root)
         try:
+            engine.policy["ignore_python_formatting"] = ignore_python_formatting
             engine.policy["risk"] = {case["action"]["path"]: case["action"]["risk"]}
             state["initial_decision"] = decision(engine, state)
         finally:
@@ -460,7 +478,7 @@ def trial(directory, case, condition):
     return read(directory / "result.json")
 
 
-def manifest(cases, version):
+def manifest(cases, version, ignore_python_formatting=False):
     inputs = {
         "protocol": PROTOCOL,
         "model": MODEL,
@@ -475,7 +493,7 @@ def manifest(cases, version):
                 for p in sorted((SOURCE / "src/verix").rglob("*.py"))
             )
         ).hexdigest(),
-        "ignore_python_formatting": False,
+        "ignore_python_formatting": ignore_python_formatting,
     }
     digest = hashlib.sha256(json.dumps(inputs, sort_keys=True).encode()).hexdigest()
     return {
@@ -555,6 +573,16 @@ def main():
     parser.add_argument("--smoke", action="store_true")
     parser.add_argument("--resume", action="store_true")
     parser.add_argument(
+        "--ignore-python-formatting",
+        action="store_true",
+        help="Evaluate Python AST fingerprints while preserving exact-byte mode as the default",
+    )
+    parser.add_argument(
+        "--diagnostic-only",
+        action="store_true",
+        help="Run the full batch as owner-authorized, unreviewed diagnostics",
+    )
+    parser.add_argument(
         "--review", type=Path, help="Independent protocol review required for 450 trials"
     )
     parser.add_argument("--hook", type=Path, help=argparse.SUPPRESS)
@@ -571,18 +599,21 @@ def main():
     if auth.returncode or "ChatGPT" not in auth.stdout + auth.stderr:
         raise ValueError("Existing ChatGPT login required; no API-key fallback")
     cases = load(SCENARIOS)
-    protocol = manifest(cases, version)
+    protocol = manifest(cases, version, args.ignore_python_formatting)
     if not args.smoke:
-        review = read(args.review) if args.review else {}
-        if (
-            review.get("protocol_hash") != protocol["protocol_hash"]
-            or review.get("decision") != "approved"
-            or not isinstance(review.get("reviewer"), str)
-            or not review["reviewer"].strip()
-        ):
-            raise ValueError(
-                "Full trials require a named independent review matching the protocol hash"
-            )
+        if args.diagnostic_only and args.review:
+            raise ValueError("Choose diagnostic-only execution or independent review, not both")
+        if not args.diagnostic_only:
+            review = read(args.review) if args.review else {}
+            if (
+                review.get("protocol_hash") != protocol["protocol_hash"]
+                or review.get("decision") != "approved"
+                or not isinstance(review.get("reviewer"), str)
+                or not review["reviewer"].strip()
+            ):
+                raise ValueError(
+                    "Full trials require a named independent review matching the protocol hash"
+                )
     if args.output.is_symlink():
         raise ValueError("Output cannot be a symlink")
     output = args.output.resolve()
@@ -592,7 +623,18 @@ def main():
     if existed and not args.resume:
         raise ValueError("Output already exists; use --resume")
     output.mkdir(mode=0o700, parents=True, exist_ok=True)
-    expected = {**protocol, "smoke": args.smoke}
+    expected = {
+        **protocol,
+        "smoke": args.smoke,
+        "diagnostic_only": args.diagnostic_only,
+        "review_status": "not required for smoke"
+        if args.smoke
+        else (
+            "owner-authorized diagnostic; independent review pending"
+            if args.diagnostic_only
+            else "independent review supplied"
+        ),
+    }
     with locked(output / "run.lock"):
         target = output / "manifest.json"
         if existed and (not target.exists() or read(target) != json.loads(json.dumps(expected))):
@@ -604,7 +646,9 @@ def main():
                 for condition in CONDITIONS:
                     directory = output / f"{index:02d}-{repetition}-{condition}"
                     try:
-                        results.append(trial(directory, case, condition))
+                        results.append(
+                            trial(directory, case, condition, args.ignore_python_formatting)
+                        )
                     except Exception as exc:
                         write(
                             output / "interrupted.json",
