@@ -1,0 +1,6 @@
+version: 1
+mode: blocking
+risk:
+  'auth/*': high
+exclude: ['.env*', '.verix/*']
+checks: {}

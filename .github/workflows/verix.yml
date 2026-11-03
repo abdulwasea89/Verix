@@ -1,0 +1,11 @@
+name: Verix
+on: [pull_request]
+permissions:
+  contents: read
+  actions: read
+  pull-requests: write
+jobs:
+  check:
+    uses: abdulwasea89/Verix/.github/workflows/verix-pr.yml@0c60404cfaa8c2ad8e130c4f34e2a9c0c52d0c57
+    with:
+      tool-ref: 0c60404cfaa8c2ad8e130c4f34e2a9c0c52d0c57
