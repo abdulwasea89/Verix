@@ -25,12 +25,14 @@ python scripts/run_codex_trials.py --smoke --output /tmp/verix-codex-smoke
 
 Smoke runs one scenario under all three conditions, once. Outputs must stay outside the source checkout. The runner ignores user configuration for controlled trials, disables plugins/apps/multi-agent tools, restricts tools, removes API-key overrides, and forces ChatGPT authentication. Hook trust is bypassed only for the harness's vetted inline definitions. This does not test project discovery or interactive hook trust. Never upload Codex credentials to public CI.
 
-Keep the implementation unchanged during a run. Each manifest binds runner bytes, implementation bytes, all scenarios, model identifier, CLI version, and strict policy mode. The smoke manifest supplies the protocol hash for review. Full execution requires a separately provided JSON record with that hash, a named `reviewer`, and `decision: "approved"`. That record is a human assertion, not a cryptographic attestation; do not manufacture one.
+Keep the implementation unchanged during a run. Each manifest binds runner bytes, implementation bytes, all scenarios, model identifier, CLI version, and fingerprint profile. Exact-byte comparison remains the default. `--ignore-python-formatting` opts into the existing Python AST fingerprint for both Verix and direct-hash decisions; modes remain significant, and invalid or oversized Python files fall back to exact bytes. The profile is included in the protocol hash and resume checks.
 
 ```sh
-python scripts/run_codex_trials.py --output /tmp/verix-codex-full --review /path/to/approved-review.json
-python scripts/run_codex_trials.py --output /tmp/verix-codex-full --review /path/to/approved-review.json --resume
+python scripts/run_codex_trials.py --output /tmp/verix-codex-full --ignore-python-formatting --diagnostic-only
+python scripts/run_codex_trials.py --output /tmp/verix-codex-full --ignore-python-formatting --diagnostic-only --resume
 ```
+
+`--diagnostic-only` authorizes execution while independent review is pending. It does not assert reviewer approval or release acceptance. Ordinary full runs still require a named independent review JSON matching the exact protocol hash. The alternate GitHub account `abdulwasea992` belongs to the repository owner and is therefore owner review, not independent review.
 
 Existing output requires `--resume`; model, protocol, and scenario mismatches are rejected. Completed trials and saved completed phase responses are reused. Interrupted attempts retain separate raw logs. Authentication, quota, tool, or timeout failures stop the batch; resume only after investigating the recorded interruption. Each model request is limited to 180 seconds. No API-key fallback, additional credit purchase, or automatic quota-wait loop is implemented.
 

@@ -6,9 +6,9 @@ This is an evidence checklist, not a completed certification. Keep raw participa
 
 V1 targets the deterministic local CLI and Codex integration, with native Codex hooks supported on Linux only after live acceptance. CLI/engine packaging remains tested on Linux, macOS, and Windows. Native macOS/Windows hooks and Claude are experimental until independently validated. Hosted accounts, subscriptions, automatic claim extraction, and LLM verification remain outside scope.
 
-## Independent benchmark review — nominated reviewer, pending decision
+## Independent benchmark review — pending
 
-The owner nominated GitHub user `abdulwasea992`. The account exists; independence, scope acceptance, and an actual review decision remain unverified. No approval is implied and no outreach has been sent.
+The owner confirmed that GitHub user `abdulwasea992` is their own alternate account. It can be used for the owner's review, but it does not provide independent review. No independent reviewer or approval is recorded.
 
 Provide a reviewer handle, date, reviewed repository revision, protocol hash, decision, and unresolved findings. The reviewer must be independent of implementation and label authorship. They must check:
 
@@ -18,7 +18,7 @@ Provide a reviewer handle, date, reviewed repository revision, protocol hash, de
 - Raw errors, omitted trials, blocked valid proposals, recovery evidence, and latency/token denominators.
 - The difference between synthetic initial verdicts, native diagnostic completion, and actual customer feature outcomes.
 
-Use the [frozen-protocol runner guide](../benchmark/codex-protocol.md). A named matching protocol approval is required for the full 450-trial run. Do not use an AI self-review as independent human acceptance.
+Use the [frozen-protocol runner guide](../benchmark/codex-protocol.md). The owner has authorized a 450-trial diagnostic run using the existing Codex login while independent review is pending. Such results remain draft and do not satisfy independent human acceptance.
 
 ## Independent security review — pending assignment and decision
 
