@@ -62,6 +62,17 @@
       },
       "complete": true
     },
+    "a095ae8f2ff94d3baf480f2098327ab1": {
+      "id": "a095ae8f2ff94d3baf480f2098327ab1",
+      "kind": "observation",
+      "path": "tests/test_codex_trials.py",
+      "revision": "d1c52e87a6319fe3decaaea61a80fbd0c3d66354",
+      "fingerprint": {
+        "sha256": "b341be676199113a9f01102dd250dc3348a6f2a92b26dda0c60cb860215567bf",
+        "mode": "100644"
+      },
+      "complete": true
+    },
     "a12d79d0772b4f1a9b0d7b04e2311942": {
       "id": "a12d79d0772b4f1a9b0d7b04e2311942",
       "kind": "claim",

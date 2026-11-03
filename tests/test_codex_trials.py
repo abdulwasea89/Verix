@@ -216,6 +216,7 @@ class TrialTests(unittest.TestCase):
 
     def test_diagnostic_only_runs_full_batch_and_keeps_release_unaccepted(self):
         from types import SimpleNamespace
+        from contextlib import nullcontext
         from contextlib import redirect_stdout
         from io import StringIO
 
@@ -255,6 +256,7 @@ class TrialTests(unittest.TestCase):
             ),
             patch.object(trials, "load", return_value=[self.case]),
             patch.object(trials, "trial", return_value=row) as run_trial,
+            patch.object(trials, "locked", return_value=nullcontext()),
             redirect_stdout(StringIO()),
         ):
             trials.main()
