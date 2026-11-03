@@ -1,1 +1,1 @@
-AUTH_MODE = "session"
+AUTH_MODE = "jwt"
