@@ -2,31 +2,28 @@
 
 [![CI](https://github.com/abdulwasea89/Verix/actions/workflows/ci.yml/badge.svg)](https://github.com/abdulwasea89/Verix/actions/workflows/ci.yml)
 
-**Find the assumptions that went stale while your coding agent was working.**
+**Catch outdated assumptions before your coding agent builds on them.**
 
-Verix connects an agent's observed file reads to explicit claims, compares that evidence with the current repository, and tells you what needs rechecking. It runs locally with Python, Git, and SQLite. No account, model API key, or hosted service is required.
+Verix is a local command-line tool that helps you and your AI coding assistant notice when information used to plan a change has become outdated.
 
-**Release status:** `0.1.0`, a development candidate. Automated CI covers Linux, macOS, and Windows. Real-agent evaluation and release acceptance are tracked in [release status](docs/release-status.md).
+For example, Codex reads your login code and assumes it uses JWT. Another change switches that code to server-side sessions. Verix flags the changed evidence so you can review the assumption before continuing. A changed file makes a statement worth checking; it does not automatically make the statement wrong.
 
-## Why Verix
+Verix runs with Python, Git, and SQLite. It needs no Verix account, subscription, or model API key. **Version `0.1.0` is a development candidate**; see [release status](docs/release-status.md) for completed checks and remaining acceptance work.
 
-An agent reads your authentication module and plans work assuming it uses JWT. While it works, another change introduces server-side sessions. The resulting pull request can merge without a text conflict even though its assumptions need another look.
+[Install](#installation) · [Try it](#your-first-check) · [Use with Codex](#use-with-codex) · [PR checks](#github-pull-request-checks) · [Troubleshooting](#troubleshooting)
 
-Verix records the supporting evidence, flags the changed source, and follows the affected claim through dependent decisions and proposed edits. A changed file makes a claim **suspect**, not automatically false.
+## How it works
 
-## What is included
+1. **Record evidence:** track the contents and Git revision of files you reviewed.
+2. **Register a claim:** explicitly state what those files support, such as “The login endpoint uses JWT.”
+3. **Check for changes:** Verix compares current files with that evidence and follows links to dependent claims and proposed edits.
+4. **Review the result:** recheck affected statements, correct them, or explicitly reaffirm them after review.
 
-- Exact content fingerprints, Git revisions, and file modes, including uncommitted local changes.
-- Explicit claims, transitive dependencies, and independently declared alternative evidence.
-- Repository policies with advisory or blocking behavior and per-path risk levels.
-- Revision-, evidence-, and policy-bound verification with replayable decision history.
-- Claude Code capture plus an experimental Codex adapter for exact `cat` reads and native patches.
-- Metadata-only session receipts and a reusable GitHub Actions PR workflow.
-- A reproducible 30-case fixture benchmark with raw results and baseline comparisons.
+You or your agent must register claims. Verix does not automatically extract assumptions from conversation. It complements code review and tests.
 
 ## Installation
 
-Requirements: Python 3.12 or newer and Git on your PATH. Install from the repository; no PyPI release is advertised.
+You need **Python 3.12+** and **Git** on your PATH. Install from source:
 
 ```sh
 git clone https://github.com/abdulwasea89/Verix.git
@@ -45,11 +42,11 @@ python3 -m venv .venv
 **Windows PowerShell**
 
 ```powershell
-py -3.12 -m venv .venv
+py -3 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 ```
 
-Then install and verify:
+Install and confirm that the command works:
 
 ```sh
 python -m pip install .
@@ -57,145 +54,124 @@ verix --version
 verix --help
 ```
 
-For reproducible team installations, check out a reviewed commit before installing. Contributor tooling and tests are described in [CONTRIBUTING.md](CONTRIBUTING.md).
+Keep this environment active while using Verix, including from another project. Reactivate it in new terminals. For reproducible installations, check out a reviewed Verix commit before installing. See [CONTRIBUTING.md](CONTRIBUTING.md) for development dependencies.
 
-## Quick start
+## Your first check
 
-From the Git repository you want to check, with at least one existing commit:
+Work inside the Git project you want to check. It must already have at least one commit. For a first try, you can stay in the cloned Verix repository; its `README.md` works with the example below. Otherwise, replace this placeholder with your project's path:
+
+```sh
+cd PATH_TO_YOUR_PROJECT
+```
+
+Initialize tracking and create a session:
 
 ```sh
 verix init
 verix session start --agent manual
 ```
 
-Add these entries to your project's `.gitignore` to keep local state out of commits;
-`verix init` does not edit that file:
-
-```gitignore
-.verix/
-.claude/settings.local.json
-```
-
-Copy the returned session ID. Replace `SESSION_ID` below and choose an existing file in your project:
+A **session** groups the evidence and claims for one piece of work. Copy the returned `session` value and replace `SESSION_ID` below. Review your project's README first, then run these commands; substitute another existing file and a matching claim if needed:
 
 ```sh
 verix read README.md --session SESSION_ID
-verix claim add 'README describes the project setup' --session SESSION_ID --evidence README.md
+verix claim add "README describes the project setup" --session SESSION_ID --evidence README.md
 verix session complete --session SESSION_ID --ack-limitations
 verix check --session SESSION_ID --path README.md
 verix report --session SESSION_ID
 ```
 
-Use `--repo PATH` before the command to check a repository from another directory. Add `--json` to `report` for machine-readable output.
+With unchanged evidence, this example returns `allow`. `read` records a fingerprint; it does not display the file for you. `complete` acknowledges your assessment that capture is sufficient, rather than proving every dependency was covered.
 
-Completing a session acknowledges your capture assessment. It does not establish that every relevant dependency was observed.
+Initialization creates `.verix.yml` and local state. Commit the policy, and add these entries to your project's `.gitignore` yourself:
 
-### When evidence changes
+```gitignore
+.verix/
+.codex/hooks.json
+.claude/settings.local.json
+```
 
-Inspect the current source and its diff. If the claim still holds, explicitly reaffirm it:
+### Understand the result
+
+| Result | Meaning | `verix check` exit code |
+| --- | --- | --- |
+| `allow` | The recorded claims meet the current policy. | `0` |
+| `verify` | Evidence needs review before relying on it. | `10` |
+| `block` | The policy rejects the proposed action. | `20` |
+| `unresolved` | Evidence is missing, incomplete, or unknown. | `30` |
+
+`verix check` uses `1` for operational errors and `2` for argument errors. Use `report --json` for structured output, or put `--repo PATH` before a command to select another repository.
+
+### When a file changes
+
+Run `verix report --session SESSION_ID`, inspect the diff, and review the affected claim. If it still holds, copy its ID from the report and reaffirm it locally:
 
 ```sh
 verix verify CLAIM_ID --session SESSION_ID --reaffirm
+verix check --session SESSION_ID --path README.md
 ```
 
-For a configured verification command, add `--check CHECK_NAME`. Commands execute only when explicitly requested and require reaffirmation too. If an assumption is false, start a fresh session with corrected claims rather than reaffirming it. A subsequent evidence, revision, or policy change expires successful verification.
+If the claim is wrong, start a fresh session with corrected claims and current evidence. Later evidence, revision, or policy changes expire successful verification. PR receipts require fresh reads and claims; local reaffirmations are not exported as approvals.
 
-## Configuration
+## Use with Codex
 
-`verix init` creates `.verix.yml`. Keep it in version control:
+**Yes, Codex can use Verix.** Start with the CLI workflow above. With Verix available in its environment, give Codex an instruction such as:
 
-```yaml
-version: 1
-mode: advisory
-risk:
-  'app/auth/*': high
-  'migrations/*': high
-  'docs/*': low
-exclude:
-  - '.env*'
-  - '.verix/*'
-  - 'secrets/*'
-ignore_python_formatting: false
-checks:
-  auth: ['python', '-m', 'pytest', 'tests/test_auth.py']
-```
+> Use Verix to track this task. Start a new tracking session, review the relevant files, record their evidence, and register the claims supporting your change. Show me the session ID and report. If evidence changes, review the affected claims before continuing. Only acknowledge completeness after assessing what was captured.
 
-The highest matching risk wins; unmatched paths are medium risk. Blocking requires `mode: blocking`. Optional Python formatting normalization compares parsed syntax while retaining raw hashes; it is off by default. See [configuration and operations](docs/usage.md) for matching rules, verification behavior, and recovery.
+Codex can run the same commands you run. `--agent codex` labels a Verix session; it does not enable automatic capture.
 
-| Exit code | `verix check` result |
-| --- | --- |
-| `0` | Allow |
-| `10` | Verify |
-| `20` | Block |
-| `30` | Unresolved |
-| `1` | Operational error |
-| `2` | Invalid command arguments |
+### Optional automatic hooks — experimental
 
-Local `check` exposes its verdict through the exit code. Advisory hook/CI integrations do not block on policy findings; operational failures are surfaced separately.
-
-## Claude Code integration
-
-```sh
-verix init --hooks
-```
-
-This merges handlers into `.claude/settings.local.json` without replacing existing settings. The hook's `session_id` identifies the session to use when registering claims. Capture persists across compaction. Only full Read responses matching exact observed bytes become complete evidence; partial or unfamiliar responses remain unknown.
-
-Claims are explicit in this release. Reads through Bash, unsupported tools, or bypassed hooks are outside capture coverage. Windows CLI/engine checks run in CI; the actual Windows Claude Code hook shell still requires live validation.
-
-## Codex integration (experimental)
+For the **local Codex CLI**, run this from the project root:
 
 ```sh
 verix init --hooks --agent codex
+codex
 ```
 
-This merges `.codex/hooks.json`. Start Codex from the repository root, enable its hooks feature, and review/trust the hooks through `/hooks`. Existing Codex configuration is preserved. See [Codex setup and live evidence](docs/codex.md).
+This merges `.codex/hooks.json` and creates a minimal `.codex/config.toml` enabling hooks if that file is absent. Existing configuration is preserved. Review and trust the project and handlers through `/hooks`, following the [official Codex hooks documentation](https://learn.chatgpt.com/docs/hooks).
 
-The adapter captures single literal `cat path` reads and checks every native `apply_patch` target. Register claims explicitly. Every read or unsupported command makes session capture incomplete; after reviewing evidence, use `verix session complete --session SESSION_ID --ack-limitations`. In blocking mode unsupported commands are denied. Start in advisory mode: this narrow adapter does not cover ordinary unrestricted shell workflows.
+The adapter captures single literal `cat path` reads and checks every native `apply_patch` target. Claims remain explicit. Hook sessions use Codex's native `session_id`, which is separate from a session created with `verix session start`.
 
-## Pull request checks
+Start in advisory mode. Reads and unsupported commands mark capture incomplete; blocking mode denies unsupported commands, including ordinary shell tests and shell edits. Keep the installed Python interpreter available. [Codex setup and live evidence](docs/codex.md) explain the supported workflow and limits; repository-file discovery and interactive trust still need live validation.
 
-Export and inspect a receipt, then include it in your branch. This redirection example works in Bash and PowerShell 7:
+Claude Code users can install its adapter with `verix init --hooks`. See [operations](docs/usage.md) for integration details.
+
+## Policy and enforcement
+
+`verix init` defaults to **advisory** mode: hook and CI findings are reported without blocking work. Local `verix check` still returns the verdict's exit code. To enforce findings, set `mode: blocking` in `.verix.yml`.
+
+Policy supports path-based risk, excluded files, optional Python formatting normalization, and explicitly invoked verification commands. Unmatched paths have medium risk; the highest matching risk wins. Use [configuration and recovery](docs/usage.md) for examples. Review configured commands before executing them.
+
+## GitHub pull request checks
+
+Local tracking and merge enforcement are separate setup steps. Follow the [tested PR setup walkthrough](docs/live-pr-validation.md) to install the pinned reusable workflow and commit policy to the target branch.
+
+After reviewing your changes, use a fresh tracking session and export its receipt:
 
 ```sh
 verix receipt export --session SESSION_ID > .verix-receipt.json
 ```
 
-Receipts omit file bodies, claim text, and local approval assertions. Paths and hashes can still be sensitive. CI needs refreshed reads and newly registered claims to represent renewed evidence; it does not accept exported approval assertions as proof.
+This redirection works in Bash and PowerShell 7. Inspect the receipt, commit it with your changes, push, and open the PR. Receipts omit file bodies and original claim text, but paths and hashes can still be sensitive.
 
-Add a consumer workflow:
+The workflow analyzes exact revisions under the trusted base policy. Same-repository PRs get one updated comment; forks get a report artifact and job summary. Require `check / analyze` and an up-to-date branch in branch protection. A policy added only in the PR cannot enable base-branch blocking. Verix's own `main` enforcement has not been configured by the validation tests.
 
-```yaml
-name: Verix
-on: [pull_request]
-permissions:
-  contents: read
-  actions: read
-  pull-requests: write
-jobs:
-  check:
-    uses: abdulwasea89/Verix/.github/workflows/verix-pr.yml@main
-    with:
-      receipt: .verix-receipt.json
-      tool-ref: main
-```
+## Troubleshooting
 
-Pin both `main` references to the same reviewed Verix commit for production use. Analysis uses base-branch policy and exact base/head commits, without executing PR commands. Same-repository PRs can receive one updated comment; forks receive job summaries and artifacts. Require the check and an up-to-date branch in your merge policy. [Operational details](docs/usage.md) cover permissions and limits. [Live validation and the setup walkthrough](docs/live-pr-validation.md) show the tested PR workflow and how to use it.
+- **`verix` not found:** activate the installation environment and check `python -m pip show verix`.
+- **Missing repository or revision:** run inside a Git repository with an existing commit and fetch required history.
+- **Unresolved result:** inspect the report, capture current evidence, register supported claims, and assess completeness.
+- **Codex hooks do not run:** check project trust, enabled hooks, the interpreter path, and the [adapter limits](docs/codex.md).
+- **PR remains blocked:** inspect the `verix-report` artifact, update your branch, and export fresh evidence and claims.
 
-## Evaluation and project links
+## Project documentation
 
-```sh
-verix bench run
-verix bench run --ignore-python-formatting
-```
-
-These run synthetic fixtures, not paid agents. Labels remain drafts pending independent review. Exact-byte mode still flags the benign formatting fixtures; the explicit normalization mode handles those cases. Do not interpret fixture scores as measured real-world reliability.
-
-- [Benchmark protocol](benchmark/README.md)
-- [Release acceptance](docs/release-status.md)
-- [Contributing](CONTRIBUTING.md)
-- [Agent instructions](AGENTS.md)
+- [Contributor guide](CONTRIBUTING.md) and [agent instructions](AGENTS.md)
+- [Configuration, verification, and recovery](docs/usage.md)
+- [Codex integration](docs/codex.md) and [live PR validation](docs/live-pr-validation.md)
+- [Benchmark protocol](benchmark/README.md) and [release acceptance](docs/release-status.md)
 - [Security and reporting](SECURITY.md)
-- [Product plan](docs/verix_prd.pdf) and [problem research](docs/verix_prob.pdf)
 
-Verix checks observed and declared evidence. It cannot prove a claim or pull request correct. Receipts are self-reported, and hooks are not a security boundary. The dashboard, hosted subscriptions, automatic LLM extraction, and integrations beyond Claude Code and the experimental Codex adapter are outside this release.
+Verix cannot prove code correct, discover every hidden dependency, or replace review and tests. Receipts are self-reported and hooks are not a security boundary. Hosted subscriptions, dashboards, and automatic claim extraction are outside this release.
