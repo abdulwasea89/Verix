@@ -1,4 +1,4 @@
-# Verix
+# Verix.  
 
 [![CI](https://github.com/abdulwasea89/Verix/actions/workflows/ci.yml/badge.svg)](https://github.com/abdulwasea89/Verix/actions/workflows/ci.yml)
 
